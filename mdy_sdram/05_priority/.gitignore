@@ -1,0 +1,7 @@
+proj
+work
+transcript
+vsim.wlf
+*.swp
+ip/greybox_tmp
+ip/*.qip

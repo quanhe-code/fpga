@@ -1,0 +1,334 @@
+module sobel_edge_dection_dianbo(
+    clk         ,
+    rst_n       ,
+
+    key_col     ,
+    key_row     ,
+    vsync       ,
+    href        ,
+    din         ,
+
+    xclk        ,
+    reset       ,
+    pwdn        ,
+    sio_c       ,
+    sio_d       , 
+
+    vga_hys     ,
+    vga_vys     ,
+    vga_rgb      
+);
+
+    input         clk     ;
+    input         rst_n   ;
+    input  [3:0]  key_col ;
+    output [3:0]  key_row ;
+    input         vsync   ;
+    input         href    ;
+    input  [7:0]  din     ;
+
+    output        xclk    ;
+    output        reset   ;
+    output        pwdn    ;
+
+    output        vga_hys ;
+    output        vga_vys ;
+    output [ 7:0]  vga_rgb ;
+
+    wire   [3:0]   key_num       ;
+    wire           key_vld       ;
+
+    output        sio_c     ;
+    inout         sio_d     ;
+    wire          en_sio_d_w;
+    wire          sio_d_w   ;
+    wire          sio_d_r   ;
+    assign sio_d = en_sio_d_w ? sio_d_w : 1'dz;
+    assign sio_d_r = sio_d;
+
+    wire           clk_25m       ;
+    wire           locked        ;
+    wire           en_coms       ;
+    wire   [7:0]   value_gray    ;
+    wire           rdy           ;
+    wire           wen           ;
+    wire           ren           ;
+    wire   [7:0]   addr      ;
+    wire   [7:0]   wdata         ;
+    wire           capture_en    ;
+    wire   [7:0]   rdata         ;
+    wire           rdata_vld     ;
+    wire   [15:0]  cmos_dout     ;
+    wire           cmos_dout_vld ;
+    wire           cmos_dout_sop ;
+    wire           cmos_dout_eop ;
+    wire   [7:0]   gray_dout     ;
+    wire           gray_dout_vld ;
+    wire           gray_dout_sop ;
+    wire           gray_dout_eop ;
+    wire   [7:0]   gs_dout       ;
+    wire           gs_dout_vld   ;
+    wire           gs_dout_sop   ;
+    wire           gs_dout_eop   ;
+    wire           bit_dout      ;
+    wire           bit_dout_vld  ;
+    wire           bit_dout_sop  ;
+    wire           bit_dout_eop  ;
+    wire           sobel_dout    ;
+    wire           sobel_dout_vld;
+    wire           sobel_dout_sop;
+    wire           sobel_dout_eop;
+    wire   [15:0]  rd_addr       ;
+    wire           rd_en         ;
+    wire           vga_data      ;
+    wire           rd_end        ;
+    wire           wr_end        ;
+    wire           rd_addr_sel   ;
+    wire [7:0]               sub_addr;
+
+    wire  [15:0]      cfg_port_local;
+    wire  [15:0]      cfg_port_pc   ;
+    wire  [31:0]      cfg_ip_local  ;
+    wire  [31:0]      cfg_ip_pc     ;
+    wire  [47:0]      cfg_mac_local ;
+
+    wire  [15:0]        imag_dout    ;
+    wire                imag_dout_sop;
+    wire                imag_dout_eop;
+    wire                imag_dout_vld;
+    wire                imag_dout_mty;
+    wire                imag_dout_rdy;
+
+
+    wire  [15:0]        rx_data;
+    wire                rx_sop;
+    wire                rx_eop;
+    wire                rx_vld;
+    wire                rx_mty;
+    wire                rx_rdy;
+    wire                clk_100m;
+    wire                clk_125m;
+
+    pll_ipcore u0(
+	    .inclk0 (clk    ),
+	    .c0     (xclk   ),
+	    .c1     (clk_100m ),
+	    .c2     (clk_125m ),
+    );
+
+
+   key_scan u2(
+        .clk         (xclk        ),
+        .rst_n       (rst_n       ),
+        .key_col     (key_col     ),
+        .key_row     (key_row     ),
+        .key_num     (key_num     ),
+        .key_vld     (key_vld     )         
+    );
+
+    
+
+    ov7670_config u4(
+        .clk         (xclk        ),
+        .rst_n       (rst_n       ),
+        .config_en   ((key_vld && key_num==0)  ),
+        .rdy         (rdy         ),
+        .rdata       (rdata       ),
+        .rdata_vld   (rdata_vld   ),
+        .wdata       (wdata       ),
+        .addr        (sub_addr    ),
+        .wr_en       (wen         ),
+        .rd_en       (ren         ),
+        .cmos_en     (en_capture  ), 
+        .pwdn        (pwdn        )       
+    );
+
+    sccb u5(
+        .clk        (xclk         ),
+        .rst_n      (rst_n        ),
+        .ren        (ren          ),
+        .wen        (wen          ),
+        .sub_addr   (sub_addr     ),
+        .rdata      (rdata        ),
+        .rdata_vld  (rdata_vld    ),
+        .wdata      (wdata        ),
+        .rdy        (rdy          ),
+        .sio_c      (sio_c        ),
+        .sio_d_r    (sio_d_r      ),
+        .en_sio_d_w (en_sio_d_w   ),
+        .sio_d_w    (sio_d_w      ) 
+    );
+
+    cmos_capture u6(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .en_capture  (en_capture       ),
+        .vsync       (vsync            ),
+        .href        (href             ),
+        .din         (din              ),
+        .dout        (cmos_dout        ),
+        .dout_vld    (cmos_dout_vld    ),
+        .dout_sop    (cmos_dout_sop    ),
+        .dout_eop    (cmos_dout_eop    ) 
+    );
+
+    rgb565_gray u7(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .din         (cmos_dout        ),
+        .din_vld     (cmos_dout_vld    ),
+        .din_sop     (cmos_dout_sop    ),
+        .din_eop     (cmos_dout_eop    ),
+        .dout        (gray_dout        ),
+        .dout_vld    (gray_dout_vld    ),
+        .dout_sop    (gray_dout_sop    ),
+        .dout_eop    (gray_dout_eop    ) 
+    );
+
+    gs_filter u8(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .din         (gray_dout        ),
+        .din_vld     (gray_dout_vld    ),
+        .din_sop     (gray_dout_sop    ),
+        .din_eop     (gray_dout_eop    ),
+        .dout        (gs_dout          ),
+        .dout_vld    (gs_dout_vld      ),
+        .dout_sop    (gs_dout_sop      ),
+        .dout_eop    (gs_dout_eop      ) 
+    );
+    
+    gray_bit u9(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .value       (add_5              ),
+        .din         (gs_dout          ),
+        .din_vld     (gs_dout_vld      ),
+        .din_sop     (gs_dout_sop      ),
+        .din_eop     (gs_dout_eop      ),
+        .dout        (bit_dout         ),
+        .dout_vld    (bit_dout_vld     ),
+        .dout_sop    (bit_dout_sop     ),
+        .dout_eop    (bit_dout_eop     ) 
+    );
+
+    sobel u10(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .din         (bit_dout         ),
+        .din_vld     (bit_dout_vld     ),
+        .din_sop     (bit_dout_sop     ),
+        .din_eop     (bit_dout_eop     ),
+        .dout        (sobel_dout       ),
+        .dout_vld    (sobel_dout_vld   ),
+        .dout_sop    (sobel_dout_sop   ),
+        .dout_eop    (sobel_dout_eop   )     
+    );
+
+    
+    vga_config u11(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .din         (sobel_dout       ),
+        .din_vld     (sobel_dout_vld   ),
+        .din_sop     (sobel_dout_sop   ),
+        .din_eop     (sobel_dout_eop   ),
+        .rd_addr     (rd_addr          ),
+        .rd_en       (rd_en            ),
+        .rd_end      (rd_end           ),
+        .rd_addr_sel (rd_addr_sel      ),
+        .dout        (vga_data         ),
+        .wr_end      (wr_end           )         
+    );
+
+    vga_driver#(.DATA_W(8)) u12(
+        .clk         (xclk             ),
+        .rst_n       (rst_n            ),
+        .din         (vga_data         ),
+        .wr_end      (wr_end           ),
+        .vga_hys     (vga_hys          ),
+        .vga_vys     (vga_vys          ),
+        .vga_rgb     (vga_rgb          ),
+        .rd_addr     (rd_addr          ),
+        .rd_en       (rd_en            ),
+        .rd_end      (rd_end           ),
+        .rd_addr_sel (rd_addr_sel      ) 
+    );
+
+     add_5 u13(
+	     .clk        (clk             ),
+        .rst_n       (rst_n            ),
+        .din_vld     ((key_vld && key_num==1)    ),
+        .dout        (add_5            ) 
+    );
+    
+
+    /*
+    assign cfg_port_local  = 16'd5555; 
+    assign cfg_port_pc     = 16'd5551; 
+    assign cfg_ip_local    = 32'hC0A8010a; //192 168 1 10 
+    assign cfg_ip_pc       = 32'hC0A80109; //192 168 1 9 
+    assign cfg_mac_local   = 48'h2C0203040507; 
+
+    
+
+
+    imag_pack u_imag_pack(
+                .clk       (xclk      )   ,
+                .clk_100m  (clk_100m  )   ,
+                .rst_n     (rst_n     )   ,
+                .din       ({8{bit_dout}}  )    ,
+                .din_vld   (bit_dout_vld   )    ,
+                .din_sop   (bit_dout_sop   )    ,
+                .din_eop   (bit_dout_eop   )    ,
+                .din_rdy   (          )    ,
+                .dout      (imag_dout      )   ,
+                .dout_sop  (imag_dout_sop  )   ,
+                .dout_eop  (imag_dout_eop  )   ,
+                .dout_vld  (imag_dout_vld  )   ,
+                .dout_rdy  (imag_dout_rdy  )   ,
+                .dout_mty  (imag_dout_mty  )     
+
+    );
+
+
+    mdy_udp_ip u_mdy_udp_ip(
+      .clk           (clk_100m      ),
+      .rst_n         (rst_n         ),
+      .cfg_port_local(cfg_port_local),
+      .cfg_port_pc   (cfg_port_pc   ),
+      .cfg_ip_local  (cfg_ip_local  ),
+      .cfg_ip_pc     (cfg_ip_pc     ),
+      .cfg_mac_local (cfg_mac_local ),
+                                    
+                                   
+      .tx_data       (imag_dout     ),
+      .tx_sop        (imag_dout_sop ),
+      .tx_eop        (imag_dout_eop ),
+      .tx_vld        (imag_dout_vld ),
+      .tx_rdy        (imag_dout_rdy ),
+      .tx_mty        (imag_dout_mty ),
+      .rx_data       (rx_data       ),
+      .rx_sop        (rx_sop        ),
+      .rx_eop        (rx_eop        ),
+      .rx_vld        (rx_vld        ),
+      .rx_mty        (rx_mty        ),
+                                    
+      .phy_reset     (phy_reset     ), 
+      .tx_ip_clk     (clk_125m      ), 
+      .gm_rx_clk     (gm_rx_clk     ), 
+      .gm_rx_d       (gm_rx_d       ), 
+      .gm_rx_dv      (gm_rx_dv      ), 
+      .gm_rx_err     (gm_rx_err     ), 
+      .gm_tx_d       (gm_tx_d       ), 
+      .gm_tx_en      (gm_tx_en      ), 
+      .gm_tx_err     (gm_tx_err     ), 
+      .gm_tx_clk     (gm_tx_clk     ), 
+      .mdio          (mdio          ), 
+      .mdc           (mdc           )  
+   
+   );
+
+*/
+endmodule
+

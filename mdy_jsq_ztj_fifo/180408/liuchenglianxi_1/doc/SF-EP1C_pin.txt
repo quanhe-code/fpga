@@ -1,0 +1,5 @@
+To,		Location
+clk,		PIN_16
+rst_n,		PIN_144
+led[0],		PIN_53
+led[1],		PIN_56

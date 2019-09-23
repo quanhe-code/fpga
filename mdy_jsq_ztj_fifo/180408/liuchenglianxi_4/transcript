@@ -1,0 +1,37 @@
+# Reading C:/modeltech64_10.2c/tcl/vsim/pref.tcl 
+# //  ModelSim SE-64 10.2c Jul 19 2013 
+# //
+# //  Copyright 1991-2013 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# do da_sj_tb.do 
+# Model Technology ModelSim SE-64 vlog 10.2c Compiler 2013.07 Jul 19 2013
+# -- Compiling module da_sj
+# 
+# Top level modules:
+# 	da_sj
+# Model Technology ModelSim SE-64 vlog 10.2c Compiler 2013.07 Jul 19 2013
+# -- Compiling module da_sj_tb
+# 
+# Top level modules:
+# 	da_sj_tb
+# vsim +notimingchecks -t ns -novopt work.da_sj_tb 
+# Refreshing E:/work/fpga/mdy/mdy/180408/liuchenglianxi_4/work.da_sj_tb
+# Loading work.da_sj_tb
+# Refreshing E:/work/fpga/mdy/mdy/180408/liuchenglianxi_4/work.da_sj
+# Loading work.da_sj
+# hexadecimal
+add wave -position insertpoint sim:/da_sj_tb/da_sj_1/*
+# Break key hit 
+# Break in Module da_sj_tb at ./sim/da_sj_tb.v line 26
+# Simulation Breakpoint: Break in Module da_sj_tb at ./sim/da_sj_tb.v line 26
+# MACRO ./da_sj_tb.do PAUSED at line 14
+restart
+run -all
+# Break key hit 
+# Break in Module da_sj_tb at ./sim/da_sj_tb.v line 26
+# Causality operation skipped due to absence of debug database file

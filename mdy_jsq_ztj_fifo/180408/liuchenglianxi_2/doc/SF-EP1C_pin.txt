@@ -1,0 +1,6 @@
+To,				Location
+clk,			PIN_16
+rst_n,			PIN_144
+ds_data,		PIN_129
+ds_shcp,		PIN_130
+ds_stcp,		PIN_131

@@ -1,0 +1,11 @@
+To,				Location
+clk,			PIN_16
+rst_n,			PIN_144
+rx_uart,		PIN_56
+tx_uart,		PIN_53
+dq,				PIN_125
+ds_data,		PIN_129
+ds_shcp,		PIN_130
+ds_stcp,		PIN_131
+beep			PIN_132
+	

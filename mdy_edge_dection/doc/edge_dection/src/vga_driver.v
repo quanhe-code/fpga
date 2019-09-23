@@ -1,0 +1,223 @@
+module vga_driver(
+    clk         ,
+    rst_n       ,
+    din         ,
+    wr_end      ,
+    vga_hys     ,
+    vga_vys     ,
+    vga_rgb     ,
+    rd_addr     ,
+    rd_en       ,
+    rd_end      ,
+    rd_addr_sel  
+);
+
+    //参数定义
+    parameter     DATA_W = 16;
+    parameter     COL   = 320;
+    parameter     ROW   = 200;
+    parameter     COL_2 = 160;
+    parameter     ROW_2 = 100;
+
+    //输入信号定义
+    input         clk      ;
+    input         rst_n    ;
+    input         din      ;
+    input         wr_end   ;
+
+    //输出信号定义
+    output        vga_hys    ;
+    output        vga_vys    ;
+    output [DATA_W-1:0]  vga_rgb    ;
+    output [15:0] rd_addr    ;
+    output        rd_en      ;
+    output        rd_end     ;
+    output        rd_addr_sel;
+
+    //输出信号reg定义
+    reg           vga_hys    ;
+    reg           vga_vys    ;
+    reg    [DATA_W-1:0]  vga_rgb    ;
+    reg    [15:0] rd_addr    ;
+    reg           rd_en      ;
+    reg           rd_end     ;
+    reg           rd_addr_sel;
+
+    //中间信号定义
+    reg    [9:0]  cnt_hys         ;
+    reg    [9:0]  cnt_vys         ;
+    reg           vga_hys_tmp     ;
+    reg           vga_vys_tmp     ;
+    reg           vga_hys_tmp_ff0 ;
+    reg           vga_vys_tmp_ff0 ;
+    reg           display_area    ;
+    reg           e_area          ;
+    reg           display_area_ff0;
+    reg           e_area_ff0      ;
+    reg           display_area_ff1;
+    reg           e_area_ff1      ;
+    reg    [9:0]  x               ;
+    reg    [9:0]  y               ;
+
+    wire          add_cnt_hys     ;
+    wire          end_cnt_hys     ;
+    wire          add_cnt_vys     ;
+    wire          end_cnt_vys     ;
+    wire   [9:0]  x0              ;
+    wire   [9:0]  x1              ;
+    wire   [9:0]  y0              ;
+    wire   [9:0]  y1              ;
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            cnt_hys <= 0;
+        end
+        else if(add_cnt_hys)begin
+            if(end_cnt_hys)
+                cnt_hys <= 0;
+            else
+                cnt_hys <= cnt_hys + 1;
+        end
+    end
+
+    assign add_cnt_hys = 1;
+    assign end_cnt_hys = add_cnt_hys && cnt_hys == 800-1;
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            cnt_vys <= 0;
+        end
+        else if(add_cnt_vys)begin
+            if(end_cnt_vys)
+                cnt_vys <= 0;
+            else
+                cnt_vys <= cnt_vys + 1;
+        end
+    end
+
+    assign add_cnt_vys = end_cnt_hys;
+    assign end_cnt_vys = add_cnt_vys && cnt_vys == 525-1;
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            vga_hys_tmp <= 0;
+        end
+        else if(add_cnt_hys && cnt_hys == 95)begin
+            vga_hys_tmp <= 1;
+        end
+        else if(end_cnt_hys)begin
+            vga_hys_tmp <= 0;
+        end
+    end
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            vga_vys_tmp <= 0;
+        end
+        else if(add_cnt_vys && cnt_vys == 1)begin
+            vga_vys_tmp <= 1;
+        end
+        else if(end_cnt_vys)begin
+            vga_vys_tmp <= 0;
+        end
+    end
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            vga_hys_tmp_ff0 <= 0;
+            vga_vys_tmp_ff0 <= 0;
+            vga_hys <= 0;
+            vga_vys <= 0;
+        end
+        else begin
+            vga_hys_tmp_ff0 <= vga_hys_tmp;
+            vga_vys_tmp_ff0 <= vga_vys_tmp;
+            vga_hys <= vga_hys_tmp_ff0;
+            vga_vys <= vga_vys_tmp_ff0;
+        end
+    end
+
+    always @ (*)begin
+        display_area = cnt_hys >= 141 && cnt_hys < (141+646) && cnt_vys >= 32 && cnt_vys < (32+484);
+    end
+
+    always @ (*)begin
+        e_area = cnt_hys >= x0 && cnt_hys < x1 && cnt_vys >= y0 && cnt_vys < y1;
+    end
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            display_area_ff0 <= 0;
+            e_area_ff0 <= 0;
+            display_area_ff1 <= 0;
+            e_area_ff1 <= 0;
+        end
+        else begin
+            display_area_ff0 <= display_area;
+            e_area_ff0 <= e_area;
+            display_area_ff1 <= display_area_ff0;
+            e_area_ff1 <= e_area_ff0;
+        end
+    end
+
+    assign x0 = 141 + (323 - COL_2);
+    assign x1 = 141 + (323 + COL_2);
+    assign y0 = 32 + (242 - ROW_2);
+    assign y1 = 32 + (242 + ROW_2);
+
+    always @ (*)begin
+        x = cnt_hys - x0;
+    end
+
+    always @ (*)begin
+        y = cnt_vys - y0;
+    end
+
+    always @ (*)begin
+        rd_addr = COL*y + x;
+    end
+ 
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            rd_addr_sel <= 1;
+        end
+        else if(rd_end && wr_end)begin
+            rd_addr_sel <= ~rd_addr_sel;
+        end
+    end
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            rd_end <= 0;
+        end
+        else if(end_cnt_vys)begin
+            rd_end <= 1;
+        end
+        else begin
+            rd_end <= 0;
+        end
+    end
+
+    always @ (*)begin
+        rd_en = e_area;
+    end
+
+    always @ (posedge clk or negedge rst_n)begin
+        if(!rst_n)begin
+            vga_rgb <= 0;
+        end
+        else if(display_area_ff1)begin
+            if(e_area_ff1)begin
+                vga_rgb <= ~{DATA_W{din}};
+            end
+            else begin
+                vga_rgb <= {DATA_W{1'b1}};
+            end
+        end
+        else begin
+            vga_rgb <= 0;
+        end
+    end
+
+endmodule
+

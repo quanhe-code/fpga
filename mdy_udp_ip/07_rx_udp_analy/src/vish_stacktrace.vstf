@@ -1,0 +1,15 @@
+# Current time Tue Mar 05 00:08:07 2019
+# ModelSim Stack Trace
+# Program = vish
+# Id = "10.2c"
+# Version = "2013.07"
+# Date = "Jul 19 2013"
+# Platform = win64
+
+Exception c0000005 has occurred at address 10087cf6. Traceback:
+# 0    0x10087cf6: 'TclListObjSetElement + 0x3f6'
+# 1    0x10086beb: 'Tcl_ListObjAppendElement + 0x7b'
+# 2    0x10025dc5: 'Tcl_DbCkrealloc + 0xe205'
+# 3    0x10011461: 'Tcl_ListMathFuncs + 0x591'
+# 4    0x02adbd30: '<unknown (@0x2adbd30)>'
+# 5    0x02adbd30: '<unknown (@0x2adbd30)>'

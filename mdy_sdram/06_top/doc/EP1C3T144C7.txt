@@ -1,0 +1,50 @@
+To,			Location
+clk,			PIN_16
+rst_n,			PIN_144
+
+key,			PIN_57
+
+sdram_clk,   	PIN_26
+cke,         	PIN_27
+cs_n,        	PIN_39
+ras_n,       	PIN_38
+cas_n,       	PIN_37
+we_n,        	PIN_1
+
+addr[0],       	PIN_47
+addr[1],       	PIN_48
+addr[2],       	PIN_49
+addr[3],       	PIN_50
+addr[4],       	PIN_36
+addr[5],       	PIN_35
+addr[6],       	PIN_34
+addr[7],       	PIN_33
+addr[8],       	PIN_32
+addr[9],       	PIN_31
+addr[10],       PIN_42
+addr[11],       PIN_28
+
+bank[0],		PIN_40
+bank[1],		PIN_41
+
+dq[0],			PIN_132   
+dq[1],			PIN_133 
+dq[2],			PIN_134 
+dq[3],			PIN_139 
+dq[4],			PIN_140 
+dq[5],			PIN_141 
+dq[6],			PIN_142 
+dq[7],			PIN_143 
+dq[8],			PIN_11 
+dq[9],			PIN_10 
+dq[10],			PIN_7 
+dq[11],			PIN_6 
+dq[12],			PIN_5 
+dq[13],			PIN_4 
+dq[14],			PIN_3 
+dq[15],			PIN_2 
+
+       
+
+
+	

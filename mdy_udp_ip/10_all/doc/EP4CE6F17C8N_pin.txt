@@ -1,0 +1,37 @@
+To,			Location
+clk,			PIN_E1
+rst_n,			PIN_N13
+
+key_sw,			PIN_M15
+
+gm_tx_clk,		PIN_A7
+gm_tx_d[7],		PIN_D5
+gm_tx_d[6],		PIN_A12
+gm_tx_d[5],		PIN_B13
+gm_tx_d[4],		PIN_A11
+gm_tx_d[3],		PIN_A10
+gm_tx_d[2],		PIN_B11
+gm_tx_d[1],		PIN_A9
+gm_tx_d[0],		PIN_A8
+gm_tx_en,		PIN_B9
+gm_tx_err,   		PIN_A13
+
+gm_rx_clk,		PIN_B7
+gm_rx_d[7],		PIN_A5
+gm_rx_d[6],		PIN_B6
+gm_rx_d[5],		PIN_A4
+gm_rx_d[4],		PIN_B5
+gm_rx_d[3],		PIN_B4
+gm_rx_d[2],		PIN_A2
+gm_rx_d[1],		PIN_B3
+gm_rx_d[0],		PIN_C2
+gm_rx_dv,		PIN_B1
+gm_rx_err,		PIN_D11
+
+mdc,			PIN_C6
+mdio,			PIN_D6
+
+phy_reset,		PIN_B10
+
+
+	

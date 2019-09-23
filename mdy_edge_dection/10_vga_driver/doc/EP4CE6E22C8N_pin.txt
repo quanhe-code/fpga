@@ -1,0 +1,30 @@
+To,			Location
+clk,			PIN_89
+rst_n,			PIN_23
+
+vga_clk,		PIN_137
+vga_hys,		PIN_136
+vga_vys,		PIN_135
+
+vga_rgb[15],	PIN_30	
+vga_rgb[14],	PIN_31	
+vga_rgb[13],	PIN_32
+vga_rgb[12],	PIN_33	
+vga_rgb[11],	PIN_34	
+
+vga_rgb[10],	PIN_2	
+vga_rgb[9],		PIN_3 	
+vga_rgb[8],		PIN_7	
+vga_rgb[7],		PIN_10
+vga_rgb[6],		PIN_11
+vga_rgb[5],		PIN_28
+
+vga_rgb[4],		PIN_138	
+vga_rgb[3],		PIN_141	
+vga_rgb[2],		PIN_142
+vga_rgb[1],		PIN_143
+vga_rgb[0],		PIN_144
+
+vga_blank_n,	PIN_1
+
+	

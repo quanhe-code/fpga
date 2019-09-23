@@ -1,0 +1,21 @@
+To,			Location
+clk,			PIN_23
+rst_n,			PIN_72
+rx_uart,		PIN_76
+tx_uart,		PIN_75
+dq,			PIN_50
+
+seg_sel[0],		PIN_114
+seg_sel[1],		PIN_115
+seg_sel[2],		PIN_119
+segment[0],		PIN_127
+segment[1],		PIN_128
+segment[2],		PIN_124
+segment[3],		PIN_121
+segment[4],		PIN_120
+segment[5],		PIN_126
+segment[6],		PIN_129
+segment[7],		PIN_125
+
+beep,			PIN_68
+	

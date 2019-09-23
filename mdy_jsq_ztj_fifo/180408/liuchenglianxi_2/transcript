@@ -1,0 +1,43 @@
+# Reading C:/modeltech64_10.2c/tcl/vsim/pref.tcl 
+# //  ModelSim SE-64 10.2c Jul 19 2013 
+# //
+# //  Copyright 1991-2013 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //
+# do smg_tb2.do 
+# ** Warning: (vlib-34) Library already exists at "work".
+# 
+# Model Technology ModelSim SE-64 vlog 10.2c Compiler 2013.07 Jul 19 2013
+# -- Compiling module smg
+# -- Compiling module smg_interface
+# 
+# Top level modules:
+# 	smg
+# Model Technology ModelSim SE-64 vlog 10.2c Compiler 2013.07 Jul 19 2013
+# -- Compiling module smg_tb
+# -- Compiling module smg_tb2
+# 
+# Top level modules:
+# 	smg_tb
+# 	smg_tb2
+# vsim +notimingchecks -t ns -novopt work.smg_tb2 
+# Refreshing E:/work/fpga/mdy/mdy/180408/liuchenglianxi_2/work.smg_tb2
+# Loading work.smg_tb2
+# Refreshing E:/work/fpga/mdy/mdy/180408/liuchenglianxi_2/work.smg
+# Loading work.smg
+# Refreshing E:/work/fpga/mdy/mdy/180408/liuchenglianxi_2/work.smg_interface
+# Loading work.smg_interface
+# hexadecimal
+# Break key hit 
+# Break in Module smg_tb2 at ./sim/smg_tb2.v line 26
+# Simulation Breakpoint: Break in Module smg_tb2 at ./sim/smg_tb2.v line 26
+# MACRO ./smg_tb2.do PAUSED at line 14
+add wave -position insertpoint sim:/smg_tb2/smg_1/*
+restart
+run -all
+# Break key hit 
+# Break in Module smg at ./src/smg.v line 27
